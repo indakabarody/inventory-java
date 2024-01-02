@@ -25,7 +25,7 @@ import javax.swing.JOptionPane;
 public class FLaporanBarangKeluar extends javax.swing.JDialog {
 
     /**
-     * Creates new form FLaporanBarangMasuk
+     * Creates new form FLaporanBarangKeluar
      */
     public FLaporanBarangKeluar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -116,7 +116,7 @@ public class FLaporanBarangKeluar extends javax.swing.JDialog {
         try {
             PdfDocument pdfDoc = new PdfDocument(new PdfWriter(dest));
             try (Document doc = new Document(pdfDoc, PageSize.A4.rotate())) {
-                String header1 = "Laporan Data Barang Masuk";
+                String header1 = "Laporan Data Barang Keluar";
                 doc.add(new Paragraph(header1).setBold().setFontSize(16));
                 String header2 = "Toko Gadget";
                 doc.add(new Paragraph(header2).setFontSize(12));

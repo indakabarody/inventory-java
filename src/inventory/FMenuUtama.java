@@ -50,8 +50,6 @@ public class FMenuUtama extends javax.swing.JFrame {
         mnLaporanBarangKeluar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Aplikasi Inventory");
-        getContentPane().setLayout(new java.awt.BorderLayout());
 
         jPanel1.setMinimumSize(new java.awt.Dimension(449, 58));
 
@@ -149,6 +147,11 @@ public class FMenuUtama extends javax.swing.JFrame {
         mnLaporan.add(mnLaporanBarangMasuk);
 
         mnLaporanBarangKeluar.setText("Laporan Barang Keluar");
+        mnLaporanBarangKeluar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnLaporanBarangKeluarActionPerformed(evt);
+            }
+        });
         mnLaporan.add(mnLaporanBarangKeluar);
 
         jMenuBar1.add(mnLaporan);
@@ -188,6 +191,10 @@ public class FMenuUtama extends javax.swing.JFrame {
     private void mnBarangKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnBarangKeluarActionPerformed
         new FBarangKeluar().setVisible(true);
     }//GEN-LAST:event_mnBarangKeluarActionPerformed
+
+    private void mnLaporanBarangKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnLaporanBarangKeluarActionPerformed
+        new FLaporanBarangKeluar(this, false).setVisible(true);
+    }//GEN-LAST:event_mnLaporanBarangKeluarActionPerformed
 
     /**
      * @param args the command line arguments
