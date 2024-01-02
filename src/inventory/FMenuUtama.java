@@ -50,6 +50,7 @@ public class FMenuUtama extends javax.swing.JFrame {
         mnLaporanBarangKeluar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Aplikasi Inventory");
         getContentPane().setLayout(new java.awt.BorderLayout());
 
         jPanel1.setMinimumSize(new java.awt.Dimension(449, 58));
@@ -169,7 +170,7 @@ public class FMenuUtama extends javax.swing.JFrame {
     }//GEN-LAST:event_mnLogoutActionPerformed
 
     private void mnLaporanBarangMasukActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnLaporanBarangMasukActionPerformed
-        // TODO add your handling code here:
+        new FLaporanBarangMasuk(this, false).setVisible(true);
     }//GEN-LAST:event_mnLaporanBarangMasukActionPerformed
 
     private void mnBarangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnBarangActionPerformed

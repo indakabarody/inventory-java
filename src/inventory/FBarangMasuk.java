@@ -69,6 +69,7 @@ public class FBarangMasuk extends javax.swing.JFrame {
         dateTanggal = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Barang Masuk");
 
         tblBarangMasuk.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -404,7 +405,7 @@ public class FBarangMasuk extends javax.swing.JFrame {
         try {
             Connection c = InventoryDB.getKoneksi();
             Statement s = c.createStatement();
-            String sql = "SELECT t.code AS transaction_code, CONCAT(p.code, ' - ', p.name) AS product_info, CONCAT(s.code, ' - ', s.name) AS supplier_info, t.amount, t.date "
+            String sql = "SELECT t.code AS transaction_code, CONCAT(p.code, ' - ', p.name) AS product_info, CONCAT(s.code, ' - ', s.name) AS supplier_info, t.amount, t.type, t.date "
                     + "FROM transactions t "
                     + "LEFT JOIN products p ON t.product_id = p.id "
                     + "LEFT JOIN suppliers s ON t.supplier_id = s.id "
@@ -412,16 +413,25 @@ public class FBarangMasuk extends javax.swing.JFrame {
             ResultSet r = s.executeQuery(sql);
 
             while (r.next()) {
-                String product = r.getString("product_info");
-                String supplier = r.getString("supplier_info");
-                this.cbBarang.setSelectedItem(product);
-                this.cbSupplier.setSelectedItem(supplier);
-                this.spinnerJumlah.setValue(r.getInt("amount"));
+                // Get the transaction type
+                String transactionType = r.getString("type");
 
-                // If there's a JDateChooser named dateTanggal in your UI
-                java.sql.Date sqlDate = r.getDate("date");
-                java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
-                dateTanggal.setDate(utilDate);
+                if (!transactionType.equals("In")) {
+                    JOptionPane.showMessageDialog(this, "Transaksi dengan kode " + r.getString("transaction_code") + " bukan transaksi barang masuk");
+                    // Do additional handling or actions based on the specific requirements for non-in transactions
+                } else {
+                    // Set values if it's an 'Out' transaction
+                    String product = r.getString("product_info");
+                    String supplier = r.getString("supplier_info");
+                    this.cbBarang.setSelectedItem(product);
+                    this.cbSupplier.setSelectedItem(supplier);
+                    this.spinnerJumlah.setValue(r.getInt("amount"));
+
+                    // If there's a JDateChooser named dateTanggal in your UI
+                    java.sql.Date sqlDate = r.getDate("date");
+                    java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
+                    dateTanggal.setDate(utilDate);
+                }
             }
 
             r.close();

@@ -63,6 +63,7 @@ public class FBarang extends javax.swing.JFrame {
         spinnerStokBarang = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Master Barang");
 
         tblBarang.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

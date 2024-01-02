@@ -56,6 +56,7 @@ public class FSupplier extends javax.swing.JFrame {
         btnTutup = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Master Supplier");
 
         tblSupplier.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

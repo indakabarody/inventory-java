@@ -69,6 +69,7 @@ public class FBarangKeluar extends javax.swing.JFrame {
         dateTanggal = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Barang Keluar");
 
         tblBarangKeluar.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -374,22 +375,32 @@ public class FBarangKeluar extends javax.swing.JFrame {
                     ResultSet rs = checkIfExistsStmt.executeQuery();
 
                     if (rs.next() && rs.getInt(1) > 0) {
-                        int confirmUpdate = JOptionPane.showConfirmDialog(this, "Apakah Anda ingin melakukan update transaksi dengan kode " + code + "?", "Konfirmasi Update", JOptionPane.YES_NO_OPTION);
+                        String getTransactionTypeQuery = "SELECT type FROM transactions WHERE code = ?";
+                        PreparedStatement getTransactionTypeStmt = c.prepareStatement(getTransactionTypeQuery);
+                        getTransactionTypeStmt.setString(1, code);
+                        ResultSet transactionTypeResult = getTransactionTypeStmt.executeQuery();
+                        String transactionType = transactionTypeResult.getString("type");
 
-                        if (confirmUpdate == JOptionPane.YES_OPTION) {
-                            // If the code exists, perform an update operation
-                            String updateQuery = "UPDATE transactions SET product_id = ?, supplier_id = ?, date = ?, amount = ? WHERE code = ?";
-                            PreparedStatement updateStmt = c.prepareStatement(updateQuery);
-                            updateStmt.setInt(1, productID);
-                            updateStmt.setInt(2, supplierID);
-                            updateStmt.setString(3, formattedDate);
-                            updateStmt.setInt(4, amount);
-                            updateStmt.setString(5, code);
-                            updateStmt.executeUpdate();
-
-                            JOptionPane.showMessageDialog(this, "Berhasil diubah");
+                        if (!transactionType.equals("Out")) {
+                            JOptionPane.showMessageDialog(this, "Ini bukan transaksi barang keluar, tidak bisa diupdate");
                         } else {
-                            JOptionPane.showMessageDialog(this, "Update dibatalkan");
+                            int confirmUpdate = JOptionPane.showConfirmDialog(this, "Apakah Anda ingin melakukan update transaksi dengan kode " + code + "?", "Konfirmasi Update", JOptionPane.YES_NO_OPTION);
+
+                            if (confirmUpdate == JOptionPane.YES_OPTION) {
+                                // If the code exists, perform an update operation
+                                String updateQuery = "UPDATE transactions SET product_id = ?, supplier_id = ?, date = ?, amount = ? WHERE code = ?";
+                                PreparedStatement updateStmt = c.prepareStatement(updateQuery);
+                                updateStmt.setInt(1, productID);
+                                updateStmt.setInt(2, supplierID);
+                                updateStmt.setString(3, formattedDate);
+                                updateStmt.setInt(4, amount);
+                                updateStmt.setString(5, code);
+                                updateStmt.executeUpdate();
+
+                                JOptionPane.showMessageDialog(this, "Berhasil diubah");
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Update dibatalkan");
+                            }
                         }
                     } else {
                         // If the code does not exist, perform an insert operation
@@ -422,7 +433,7 @@ public class FBarangKeluar extends javax.swing.JFrame {
         try {
             Connection c = InventoryDB.getKoneksi();
             Statement s = c.createStatement();
-            String sql = "SELECT t.code AS transaction_code, CONCAT(p.code, ' - ', p.name) AS product_info, CONCAT(s.code, ' - ', s.name) AS supplier_info, t.amount, t.date "
+            String sql = "SELECT t.code AS transaction_code, CONCAT(p.code, ' - ', p.name) AS product_info, CONCAT(s.code, ' - ', s.name) AS supplier_info, t.amount, t.type, t.date "
                     + "FROM transactions t "
                     + "LEFT JOIN products p ON t.product_id = p.id "
                     + "LEFT JOIN suppliers s ON t.supplier_id = s.id "
@@ -430,16 +441,25 @@ public class FBarangKeluar extends javax.swing.JFrame {
             ResultSet r = s.executeQuery(sql);
 
             while (r.next()) {
-                String product = r.getString("product_info");
-                String supplier = r.getString("supplier_info");
-                this.cbBarang.setSelectedItem(product);
-                this.cbSupplier.setSelectedItem(supplier);
-                this.spinnerJumlah.setValue(r.getInt("amount"));
+                // Get the transaction type
+                String transactionType = r.getString("type");
 
-                // If there's a JDateChooser named dateTanggal in your UI
-                java.sql.Date sqlDate = r.getDate("date");
-                java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
-                dateTanggal.setDate(utilDate);
+                if (!transactionType.equals("Out")) {
+                    JOptionPane.showMessageDialog(this, "Transaksi dengan kode " + r.getString("transaction_code") + " bukan transaksi barang keluar");
+                    // Do additional handling or actions based on the specific requirements for non-out transactions
+                } else {
+                    // Set values if it's an 'Out' transaction
+                    String product = r.getString("product_info");
+                    String supplier = r.getString("supplier_info");
+                    this.cbBarang.setSelectedItem(product);
+                    this.cbSupplier.setSelectedItem(supplier);
+                    this.spinnerJumlah.setValue(r.getInt("amount"));
+
+                    // If there's a JDateChooser named dateTanggal in your UI
+                    java.sql.Date sqlDate = r.getDate("date");
+                    java.util.Date utilDate = new java.util.Date(sqlDate.getTime());
+                    dateTanggal.setDate(utilDate);
+                }
             }
 
             r.close();
